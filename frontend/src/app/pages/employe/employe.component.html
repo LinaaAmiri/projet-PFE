@@ -1,0 +1,237 @@
+<div class="employe-container">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">BI</div>
+      <div class="topbar-welcome">
+        <span class="topbar-title">👋 Bienvenue <strong>{{ username }}</strong></span>
+        <span class="topbar-role">{{ role }}</span>
+      </div>
+    </div>
+    <button class="btn-logout" (click)="logout()">🚪 Déconnexion</button>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button [class.active]="activeTab === 'demandes'"
+            (click)="activeTab = 'demandes'">📋 Mes demandes</button>
+    <button [class.active]="activeTab === 'rapports'"
+            (click)="activeTab = 'rapports'">📊 Tableaux de bord</button>
+    <button [class.active]="activeTab === 'ia'"
+            (click)="activeTab = 'ia'">✦ Rapport IA</button>
+  </div>
+
+  <!-- TAB DEMANDES -->
+  <div *ngIf="activeTab === 'demandes'">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-primary text-white">
+        <h2 class="h5 mb-0">📩 Déposer une demande d'accès</h2>
+      </div>
+      <div class="card-body">
+        <p class="text-muted small">Sélectionnez le rapport auquel vous souhaitez accéder :</p>
+        <div class="form-row d-flex gap-2">
+          <select class="form-select" [(ngModel)]="rapportChoisi">
+            <option *ngFor="let r of rapportsDisponibles" [value]="r">{{ r }}</option>
+          </select>
+          <button class="btn btn-send" (click)="deposerDemande()">Envoyer la demande</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-secondary text-white">
+        <h2 class="h5 mb-0">📄 Historique de mes demandes</h2>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0" *ngIf="demandes.length > 0">
+          <thead class="table-light">
+            <tr>
+              <th>Nom du Rapport</th>
+              <th>Date de demande</th>
+              <th>Statut actuel</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of demandes">
+              <td><strong>{{ d.rapportDemande }}</strong></td>
+              <td>{{ d.dateDemande | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                <span [class]="'badge rounded-pill ' + d.statut">
+                  {{ d.statut === 'ACCEPTE' ? '✅ Acceptée' :
+                     d.statut === 'EN_ATTENTE' ? '⏳ En attente' : '🚫 Bloquée' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="p-4 text-center" *ngIf="demandes.length === 0">
+          <p class="text-muted mb-0">Aucune demande enregistrée pour le moment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB TABLEAUX DE BORD -->
+  <div *ngIf="activeTab === 'rapports'">
+
+    <!-- ACCÈS REFUSÉ -->
+    <div *ngIf="!peutConsulterRapports" class="acces-refuse">
+      <div class="acces-refuse-icon">🔒</div>
+      <h3>Accès non autorisé</h3>
+      <p>Vous n'avez pas encore accès aux tableaux de bord.</p>
+      <p>Veuillez soumettre une demande d'accès dans l'onglet
+         <strong>Mes demandes</strong>.</p>
+    </div>
+
+    <!-- RAPPORTS AUTORISÉS -->
+    <div *ngIf="peutConsulterRapports">
+      <div *ngFor="let r of rapportsAcceptes; trackBy: trackByRapport"
+           class="card shadow-sm mb-5">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+          <h3 class="h6 mb-0">{{ r.rapportDemande }}</h3>
+          <span class="badge bg-success">Accès Autorisé</span>
+        </div>
+        <div class="rapport-iframe-wrapper">
+          <iframe
+            title="Visualisation Power BI"
+            [src]="getSafeUrl(r.rapportDemande)"
+            width="100%"
+            height="800px"
+            frameborder="0"
+            allowFullScreen="true"
+            loading="lazy">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB RAPPORT IA -->
+  <div *ngIf="activeTab === 'ia'" id="rapport-print">
+
+    <!-- ACCÈS REFUSÉ -->
+    <div *ngIf="!peutConsulterRapports" class="acces-refuse">
+      <div class="acces-refuse-icon">🔒</div>
+      <h3>Accès non autorisé</h3>
+      <p>Vous devez avoir au moins un rapport Power BI approuvé
+         pour accéder aux rapports IA.</p>
+      <p>Veuillez soumettre une demande d'accès dans l'onglet
+         <strong>Mes demandes</strong>.</p>
+    </div>
+
+    <!-- RAPPORT IA — ACCÈS AUTORISÉ -->
+    <div *ngIf="peutConsulterRapports">
+
+      <div class="ia-form-card no-print">
+        <div class="logo-zone">
+          <div class="ia-logo">BI</div>
+          <div>
+            <h2>✦ Rapport IA</h2>
+            <p class="ia-subtitle">Rapport généré depuis le Data Warehouse</p>
+          </div>
+        </div>
+        <div class="ia-form-row">
+          <div class="ia-form-group">
+            <label>Type de rapport</label>
+            <select [(ngModel)]="typeRapport">
+              <option *ngFor="let r of rapportsDisponiblesIA" [value]="r.value">
+                {{ r.label }}
+              </option>
+            </select>
+          </div>
+          <div class="ia-form-group">
+            <label>Année</label>
+            <input type="number" [(ngModel)]="annee" min="2020" max="2030" />
+          </div>
+          <button class="btn-generer" (click)="genererRapportIA()" [disabled]="loadingIA">
+            {{ loadingIA ? '⏳ Génération...' : '✦ Générer' }}
+          </button>
+          <button class="btn-pdf" (click)="telechargerPDF()"
+                  *ngIf="rapportIA && !erreurIA">
+            🖨️ PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="ia-loading no-print" *ngIf="loadingIA">
+        <div class="ia-spinner"></div>
+        <p>Analyse du Data Warehouse...</p>
+      </div>
+
+      <div class="ia-erreur no-print" *ngIf="erreurIA">⚠️ {{ erreurIA }}</div>
+
+      <div *ngIf="rapportIA && !erreurIA">
+        <div class="rapport-header">
+          <div class="header-logo">
+            <div class="logo-print">BI</div>
+            <div>
+              <div class="rapport-meta">
+                <span class="badge-role">{{ rapportIA.role }}</span>
+                <span class="badge-periode">📅 {{ rapportIA.periode }}</span>
+              </div>
+              <h1>{{ rapportIA.titre }}</h1>
+              <p class="sous-titre">{{ rapportIA.sousTitre }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sections">
+          <div class="section-card"
+               *ngFor="let section of rapportIA.sections; let i = index">
+
+            <div class="section-header">
+              <span class="section-icone">{{ getIcone(section.typeGraphique) }}</span>
+              <div>
+                <h3>{{ section.titreSection }}</h3>
+                <span class="type-badge">{{ section.typeGraphique }}</span>
+              </div>
+            </div>
+
+            <div class="chart-wrapper" *ngIf="isChartType(section.typeGraphique)">
+              <canvas [id]="'chartE-' + i"></canvas>
+            </div>
+
+            <div class="data-table"
+                 *ngIf="isTableType(section.typeGraphique) &&
+                        section.donnees && section.donnees.length > 0">
+              <table>
+                <thead>
+                  <tr>
+                    <th *ngFor="let col of getKeys(section.donnees[0])">{{ col }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of section.donnees | slice:0:10">
+                    <td *ngFor="let col of getKeys(row)">{{ $any(row)[col] }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="analyse">
+              <div class="analyse-icon">💡</div>
+              <p>{{ section.analyse }}</p>
+            </div>
+
+            <div class="recommandation" *ngIf="section.recommandation">
+              <div class="reco-icon">🎯</div>
+              <div class="reco-content">
+                <span class="reco-label">Recommandation</span>
+                <p>{{ section.recommandation }}</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="conclusion-card">
+          <h3>📋 Synthèse générale</h3>
+          <p>{{ rapportIA.conclusion }}</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

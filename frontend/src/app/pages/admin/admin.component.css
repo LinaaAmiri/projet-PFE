@@ -1,0 +1,252 @@
+.admin-container {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f7f6fb;
+  min-height: 100vh;
+}
+
+/* ── TOPBAR ──────────────────────────────────────── */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #1e3a5f, #2563eb);
+  padding: 0 28px;
+  height: 58px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(37,99,235,0.2);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.topbar-logo {
+  width: 36px;
+  height: 36px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.topbar-welcome {
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar-title {
+  font-size: 15px;
+  color: #fff;
+  font-weight: 500;
+}
+
+.topbar-title strong { color: #bfdbfe; }
+
+.topbar-role {
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 1px;
+}
+
+.btn-logout {
+  padding: 7px 18px;
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.btn-logout:hover { background: rgba(255,255,255,0.25); }
+
+/* ── TABS ────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 28px 20px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 8px;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.tabs button.active { background: #eff6ff; color: #2563eb; font-weight: 600; }
+.tabs button:hover:not(.active) { background: #f8fafc; }
+
+/* ── TAB CONTENT ─────────────────────────────────── */
+.tab-content {
+  padding: 0 28px 28px;
+}
+
+.tab-content h2 {
+  font-size: 18px;
+  color: #1e293b;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+/* ── TABLE ───────────────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+th {
+  background: #1e3a5f;
+  color: white;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 13px;
+  color: #334155;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #f8fafc; }
+
+/* ── BADGES ──────────────────────────────────────── */
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge.EN_ATTENTE { background: #fff3cd; color: #856404; }
+.badge.ACCEPTE    { background: #d4edda; color: #155724; }
+.badge.BLOQUE     { background: #f8d7da; color: #721c24; }
+.badge.ARRETE     { background: #e2e3e5; color: #383d41; }
+
+/* ── ACTIONS ─────────────────────────────────────── */
+.actions { display: flex; gap: 6px; }
+
+.btn-accept {
+  padding: 5px 10px;
+  background: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn-block {
+  padding: 5px 10px;
+  background: #f59e0b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn-stop {
+  padding: 5px 10px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn-delete {
+  padding: 5px 10px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* ── FORM CARD ───────────────────────────────────── */
+.form-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 16px;
+}
+
+.form-card h3 {
+  font-size: 14px;
+  color: #1e293b;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.form-row input,
+.form-row select {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #1e293b;
+  background: #f8fafc;
+  outline: none;
+  flex: 1;
+  min-width: 140px;
+  font-family: inherit;
+}
+
+.btn-add {
+  padding: 8px 20px;
+  background: #1e3a5f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.btn-add:hover { background: #162d4a; }
+
+/* ── RAPPORT TAB ─────────────────────────────────── */
+.rapport-tab { padding: 0 28px 28px; }
+
+/* ── IMPRESSION ──────────────────────────────────── */
+@media print {
+  .topbar { display: none !important; }
+  .tabs { display: none !important; }
+}

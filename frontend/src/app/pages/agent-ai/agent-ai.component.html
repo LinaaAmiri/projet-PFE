@@ -1,0 +1,124 @@
+<div class="rapport-container" id="rapport-print">
+
+  <!-- FORMULAIRE -->
+  <div class="form-card no-print">
+    <div class="form-header">
+      <div class="logo-zone">
+        <div class="logo">BI</div>
+        <div>
+          <h2>✦ Moteur de Rapport IA</h2>
+          <p class="subtitle">Rapport généré depuis le Data Warehouse</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Type de rapport</label>
+        <select [(ngModel)]="typeRapport">
+          <option *ngFor="let r of rapports" [value]="r.value">{{ r.label }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Année</label>
+        <input type="number" [(ngModel)]="annee" min="2020" max="2030" />
+      </div>
+      <button class="btn-generer" (click)="generer()" [disabled]="loading">
+        {{ loading ? '⏳ Génération...' : '✦ Générer le rapport' }}
+      </button>
+      <button class="btn-pdf" (click)="telechargerPDF()"
+              *ngIf="rapport && !erreur">
+        🖨️ Télécharger PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading no-print" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Analyse du Data Warehouse et génération du rapport IA...</p>
+  </div>
+
+  <!-- ERREUR -->
+  <div class="erreur no-print" *ngIf="erreur">⚠️ {{ erreur }}</div>
+
+  <!-- RAPPORT -->
+  <div class="rapport" *ngIf="rapport && !erreur">
+
+    <!-- EN-TÊTE IMPRESSION -->
+    <div class="rapport-header">
+      <div class="header-logo">
+        <div class="logo-print">BI</div>
+        <div class="header-info">
+          <div class="rapport-meta">
+            <span class="badge-role">{{ rapport.role }}</span>
+            <span class="badge-periode">📅 {{ rapport.periode }}</span>
+          </div>
+          <h1>{{ rapport.titre }}</h1>
+          <p class="sous-titre">{{ rapport.sousTitre }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTIONS -->
+    <div class="sections">
+      <div class="section-card"
+           *ngFor="let section of rapport.sections; let i = index">
+
+        <div class="section-header">
+          <span class="section-icone">{{ getIcone(section.typeGraphique) }}</span>
+          <div>
+            <h3>{{ section.titreSection }}</h3>
+            <span class="type-badge">{{ section.typeGraphique }}</span>
+          </div>
+        </div>
+
+        <!-- GRAPHIQUE -->
+        <div class="chart-wrapper" *ngIf="isChartType(section.typeGraphique)">
+          <canvas [id]="'chart-' + i"></canvas>
+        </div>
+
+        <!-- TABLE -->
+        <div class="data-table"
+             *ngIf="isTableType(section.typeGraphique) &&
+                    section.donnees && section.donnees.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th *ngFor="let col of getKeys(section.donnees[0])">{{ col }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of section.donnees | slice:0:10">
+                <td *ngFor="let col of getKeys(row)">{{ $any(row)[col] }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ANALYSE -->
+        <div class="analyse">
+          <div class="analyse-icon">💡</div>
+          <p>{{ section.analyse }}</p>
+        </div>
+
+        <!-- RECOMMANDATION -->
+        <div class="recommandation" *ngIf="section.recommandation">
+          <div class="reco-icon">🎯</div>
+          <div class="reco-content">
+            <span class="reco-label">Recommandation</span>
+            <p>{{ section.recommandation }}</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONCLUSION -->
+    <div class="conclusion-card">
+      <h3>📋 Synthèse générale</h3>
+      <p>{{ rapport.conclusion }}</p>
+    </div>
+
+  </div>
+</div>

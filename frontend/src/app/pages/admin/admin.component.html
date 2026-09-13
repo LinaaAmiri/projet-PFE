@@ -1,0 +1,111 @@
+<div class="admin-container">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">BI</div>
+      <div class="topbar-welcome">
+        <span class="topbar-title">👋 Bienvenue <strong>{{ username }}</strong></span>
+        <span class="topbar-role">Administrateur</span>
+      </div>
+    </div>
+    <button class="btn-logout" (click)="logout()">🚪 Déconnexion</button>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button [class.active]="activeTab === 'demandes'"
+            (click)="activeTab = 'demandes'">📋 Demandes employés</button>
+    <button [class.active]="activeTab === 'utilisateurs'"
+            (click)="activeTab = 'utilisateurs'">👥 Gérer utilisateurs</button>
+    <button [class.active]="activeTab === 'rapport'"
+            (click)="activeTab = 'rapport'">📊 Tableaux de bord</button>
+    <button [class.active]="activeTab === 'agent-ia'"
+            (click)="activeTab = 'agent-ia'">✦ Rapport IA</button>
+  </div>
+
+  <!-- TAB DEMANDES -->
+  <div *ngIf="activeTab === 'demandes'" class="tab-content">
+    <h2>Demandes d'accès</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Employé</th>
+          <th>Rôle</th>
+          <th>Rapport</th>
+          <th>Date</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of demandes">
+          <td>{{ d.user.username }}</td>
+          <td>{{ d.user.role }}</td>
+          <td>{{ d.rapportDemande }}</td>
+          <td>{{ d.dateDemande | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td><span [class]="'badge ' + d.statut">{{ d.statut }}</span></td>
+          <td class="actions">
+            <button class="btn-accept" (click)="accepter(d.id)">✅ Accepter</button>
+            <button class="btn-block" (click)="bloquer(d.id)">🚫 Refuser</button>
+            <button class="btn-stop" (click)="arreter(d.id)">⛔ Arrêter</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="demandes.length === 0">Aucune demande pour le moment.</p>
+  </div>
+
+  <!-- TAB UTILISATEURS -->
+  <div *ngIf="activeTab === 'utilisateurs'" class="tab-content">
+    <h2>Gestion des utilisateurs</h2>
+    <div class="form-card">
+      <h3>➕ Ajouter un utilisateur</h3>
+      <div class="form-row">
+        <input [(ngModel)]="newUser.username" placeholder="Nom d'utilisateur" />
+        <input [(ngModel)]="newUser.email" placeholder="Email" type="email" />
+        <input [(ngModel)]="newUser.password" placeholder="Mot de passe" type="password" />
+        <select [(ngModel)]="newUser.role">
+          <option value="RESP_VENTE">Responsable Vente</option>
+          <option value="RESP_COMMANDE">Responsable Commande</option>
+          <option value="RESP_GENERAL">Responsable Général</option>
+        </select>
+        <button class="btn-add" (click)="ajouterUtilisateur()">Ajouter</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Rôle</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of utilisateurs">
+          <td>{{ u.username }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.role }}</td>
+          <td>
+            <button class="btn-delete"
+                    (click)="supprimerUtilisateur(u.id)">🗑️ Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TAB RAPPORT PFE -->
+  <div *ngIf="activeTab === 'rapport'" class="tab-content rapport-tab">
+ 
+
+<iframe title="Rapportglobal" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=e97c8a88-5f53-497a-bd20-e1507020ab78&autoAuth=true&ctid=1ecd776d-d57f-4de0-a67a-eca9809e8d8d" frameborder="0" allowFullScreen="true"></iframe>
+  </div>
+
+  <!-- TAB RAPPORT IA -->
+  <div *ngIf="activeTab === 'agent-ia'" class="tab-content">
+    <app-agent-ai></app-agent-ai>
+  </div>
+
+</div>
